@@ -1,0 +1,48 @@
+version: 2.1
+
+jobs:
+  lint:
+    docker:
+      # Image with Python/Node and therapist pre-installed
+      - image: mozilla/cidockerbases:therapist-latest
+
+    environment:
+      # Use Test configuration so that development dependencies aren't needed
+      DJANGO_CONFIGURATION: "Test"
+      # Use an in-memory database so that the migrations check doesn't try to access a real database
+      DATABASE_URL: "sqlite://:memory:"
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run:
+          name: Create virtualenv
+          command: |
+            python3 -m venv ~/venv
+            echo "source ~/venv/bin/activate" >> $BASH_ENV
+      - run:
+          name: Install python dependencies
+          command: pip install -r requirements/default.txt
+      - run:
+          name: Install node dependencies
+          command: yarn install --frozen-lockfile
+      - run:
+          name: Lint
+          command: therapist run --use-tracked-files
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      # By default CircleCI does not run any jobs on tags. To allow a job to
+      # run on a tag, we specify `filters.tags.only: /.*/`. That does not
+      # affect whether or not the job will run on PRs or on untagged master
+      # commits. By default all jobs listed run on all commits in PRs and on
+      # master (unless otherwise filtered).
+
+      # Group: Tests and lints
+      - lint:
+          filters:
+            tags:
+              only: /.*/

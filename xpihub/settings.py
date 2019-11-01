@@ -77,3 +77,7 @@ class Dev(Base):
 
 class Prod(Base):
     pass
+
+
+class Test(Base):
+    pass
