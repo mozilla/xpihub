@@ -1,0 +1,37 @@
+actions:
+  black:
+    run: black --check --diff {files}
+    fix: black {files}
+    include: "*.py"
+
+  flake8:
+    run: flake8 {files}
+    include: "*.py"
+    exclude: "docs/"
+
+  sort-requirements:
+    run: sort-requirements --check {files}
+    fix: sort-requirements {files}
+    include: "requirements/*.txt"
+
+  missing-migirations:
+    include: "*.py"
+    run: |
+      ./manage.py makemigrations --check --no-input --dry-run catalog || (
+        echo "You probably have migrations that need to be created" && exit 1
+      )
+
+shortcuts:
+  lint:
+    flags:
+      - include-unstaged
+      - include-untracked
+  "lint:all":
+    extends: lint
+    flags: use-tracked-files
+  fix:
+    extends: lint
+    flags: fix
+  "fix:all":
+    extends: fix
+    flags: use-tracked-files
