@@ -80,4 +80,4 @@ class Prod(Base):
 
 
 class Test(Base):
-    pass
+    SECRET_KEY = values.Value("not a secret")
