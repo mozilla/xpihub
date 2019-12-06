@@ -9,6 +9,13 @@ actions:
     include: "*.py"
     exclude: "docs/"
 
+  eslint:
+    run: yarn eslint {files}
+    fix: yarn eslint --fix {files}
+    include:
+      - "*.js"
+      - "*.jsx"
+
   sort-requirements:
     run: sort-requirements --check {files}
     fix: sort-requirements {files}
